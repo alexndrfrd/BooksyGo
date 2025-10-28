@@ -1,0 +1,122 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'booksygo-local'
+    environment: 'development'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+rule_files:
+  # - "alerts.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # API Gateway
+  - job_name: 'api-gateway'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['api-gateway:4000']
+        labels:
+          service: 'api-gateway'
+
+  # User Service
+  - job_name: 'user-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['user-service:4001']
+        labels:
+          service: 'user-service'
+
+  # Search Service
+  - job_name: 'search-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['search-service:4002']
+        labels:
+          service: 'search-service'
+
+  # Booking Service
+  - job_name: 'booking-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['booking-service:4003']
+        labels:
+          service: 'booking-service'
+
+  # AI Service
+  - job_name: 'ai-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['ai-service:4004']
+        labels:
+          service: 'ai-service'
+
+  # Package Service
+  - job_name: 'package-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['package-service:4005']
+        labels:
+          service: 'package-service'
+
+  # Payment Service
+  - job_name: 'payment-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['payment-service:4007']
+        labels:
+          service: 'payment-service'
+
+  # Notification Service
+  - job_name: 'notification-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['notification-service:4006']
+        labels:
+          service: 'notification-service'
+
+  # PostgreSQL Exporter
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'postgresql'
+
+  # Redis Exporter
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          service: 'redis'
+
+  # Node Exporter (System metrics)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # RabbitMQ
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+        labels:
+          service: 'rabbitmq'
+
+  # Elasticsearch
+  - job_name: 'elasticsearch'
+    static_configs:
+      - targets: ['elasticsearch:9200']
+        labels:
+          service: 'elasticsearch'
+
