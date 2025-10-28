@@ -1,0 +1,23 @@
+🎨 LOGO SETUP INSTRUCTIONS
+
+1. Salvează logo-ul purple cu "GO" în:
+   /Users/alexandru.besleaga/BooksyGo/assets/images/logo.png
+
+2. Opțional, creează și alte variante:
+   - logo-icon.png (doar iconița, pentru favicon)
+   - logo-white.png (versiune white pentru dark mode)
+   - logo-horizontal.png (versiune orizontală pentru header)
+
+3. După ce salvezi logo-ul, commit și push:
+   git add assets/
+   git commit -m "feat: add BooksyGo logo"
+   git push
+
+Logo-ul va apărea automat în README pe GitHub! ✨
+
+Brand Colors detectate din logo:
+- Primary Purple: #4A148C (sau similar din logo)
+- Accent Gold/Yellow: #FFD700 / #FFC107
+- White: #FFFFFF
+
+Folosește aceste culori în Tailwind config pentru consistency!

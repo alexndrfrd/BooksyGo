@@ -1,6 +1,14 @@
-# 🌍 BooksyGo - Smart Travel Platform
-
-> AI-powered travel platform that helps you find and book the best vacation packages with gamification and intelligent recommendations.
+<div align="center">
+  <img src="./assets/images/logo.png" alt="BooksyGo Logo" width="200" />
+  
+  # 🌍 BooksyGo - Smart Travel Platform
+  
+  > AI-powered travel platform that helps you find and book the best vacation packages with gamification and intelligent recommendations.
+  
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+  [![Made with ❤️](https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F-red.svg)](https://github.com/alexndrfrd/BooksyGo)
+</div>
 
 ## ✨ Features
 
