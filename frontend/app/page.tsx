@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, Plane, Hotel, Users, Calendar, ArrowRight, Sparkles, Trophy, Target } from "lucide-react";
+import { useState } from "react";
 
 export default function Home() {
+  const [searchType, setSearchType] = useState<'flights' | 'hotels'>('flights');
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
@@ -33,10 +35,18 @@ export default function Home() {
 
             {/* Auth Buttons */}
             <div className="flex items-center gap-3">
-              <Button variant="ghost" className="text-white hover:bg-white/10">
+              <Button
+                variant="ghost"
+                className="text-white hover:bg-white/10"
+                onClick={() => window.location.href = '/auth/login'}
+              >
                 Log In
               </Button>
-              <Button variant="secondary" size="sm">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => window.location.href = '/auth/register'}
+              >
                 Sign Up
               </Button>
             </div>
@@ -76,50 +86,136 @@ export default function Home() {
             {/* Search Bar */}
             <Card className="max-w-4xl mx-auto shadow-2xl">
               <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                  {/* Origin */}
-                  <div className="flex items-center gap-2 p-3 border rounded-lg">
-                    <Plane className="w-5 h-5 text-primary" />
-                    <Input
-                      placeholder="De unde?"
-                      className="border-0 p-0 focus-visible:ring-0"
-                    />
+                {/* Search Type Toggle */}
+                <div className="flex justify-center mb-6">
+                  <div className="bg-white/10 rounded-lg p-1">
+                    <button
+                      onClick={() => setSearchType('flights')}
+                      className={`px-6 py-2 rounded-md font-medium transition-all ${
+                        searchType === 'flights'
+                          ? 'bg-white text-primary shadow-sm'
+                          : 'text-white/80 hover:text-white'
+                      }`}
+                    >
+                      <Plane className="w-4 h-4 inline mr-2" />
+                      Zboruri
+                    </button>
+                    <button
+                      onClick={() => setSearchType('hotels')}
+                      className={`px-6 py-2 rounded-md font-medium transition-all ${
+                        searchType === 'hotels'
+                          ? 'bg-white text-primary shadow-sm'
+                          : 'text-white/80 hover:text-white'
+                      }`}
+                    >
+                      <Hotel className="w-4 h-4 inline mr-2" />
+                      Hoteluri
+                    </button>
                   </div>
-
-                  {/* Destination */}
-                  <div className="flex items-center gap-2 p-3 border rounded-lg">
-                    <Target className="w-5 h-5 text-primary" />
-                    <Input
-                      placeholder="Încotro?"
-                      className="border-0 p-0 focus-visible:ring-0"
-                    />
-                  </div>
-
-                  {/* Date */}
-                  <div className="flex items-center gap-2 p-3 border rounded-lg">
-                    <Calendar className="w-5 h-5 text-primary" />
-                    <Input
-                      type="date"
-                      className="border-0 p-0 focus-visible:ring-0"
-                    />
-                  </div>
-
-                  {/* Passengers */}
-                  <div className="flex items-center gap-2 p-3 border rounded-lg">
-                    <Users className="w-5 h-5 text-primary" />
-                    <Input
-                      type="number"
-                      placeholder="2 adulți"
-                      className="border-0 p-0 focus-visible:ring-0"
-                    />
-                  </div>
-
-                  {/* Search Button */}
-                  <Button size="lg" className="w-full h-auto py-3">
-                    <Search className="w-5 h-5 mr-2" />
-                    Caută Acum
-                  </Button>
                 </div>
+
+                {searchType === 'flights' ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                    {/* Origin */}
+                    <div className="flex items-center gap-2 p-3 border rounded-lg">
+                      <Plane className="w-5 h-5 text-primary" />
+                      <Input
+                        placeholder="De unde?"
+                        className="border-0 p-0 focus-visible:ring-0"
+                      />
+                    </div>
+
+                    {/* Destination */}
+                    <div className="flex items-center gap-2 p-3 border rounded-lg">
+                      <Target className="w-5 h-5 text-primary" />
+                      <Input
+                        placeholder="Încotro?"
+                        className="border-0 p-0 focus-visible:ring-0"
+                      />
+                    </div>
+
+                    {/* Date */}
+                    <div className="flex items-center gap-2 p-3 border rounded-lg">
+                      <Calendar className="w-5 h-5 text-primary" />
+                      <Input
+                        type="date"
+                        className="border-0 p-0 focus-visible:ring-0"
+                      />
+                    </div>
+
+                    {/* Passengers */}
+                    <div className="flex items-center gap-2 p-3 border rounded-lg">
+                      <Users className="w-5 h-5 text-primary" />
+                      <Input
+                        type="number"
+                        placeholder="2 adulți"
+                        className="border-0 p-0 focus-visible:ring-0"
+                      />
+                    </div>
+
+                    {/* Search Button */}
+                    <Button
+                      size="lg"
+                      className="w-full h-auto py-3"
+                      onClick={() => {
+                        const origin = (document.querySelector('input[placeholder="De unde?"]') as HTMLInputElement)?.value || 'OTP';
+                        const destination = (document.querySelector('input[placeholder="Încotro?"]') as HTMLInputElement)?.value || 'BUD';
+                        const date = (document.querySelector('input[type="date"]') as HTMLInputElement)?.value || '2025-11-15';
+                        window.location.href = `/search?origin=${origin}&destination=${destination}&date=${date}`;
+                      }}
+                    >
+                      <Search className="w-5 h-5 mr-2" />
+                      Caută Zboruri
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* Destination */}
+                    <div className="flex items-center gap-2 p-3 border rounded-lg">
+                      <Hotel className="w-5 h-5 text-primary" />
+                      <Input
+                        placeholder="Destinație"
+                        className="border-0 p-0 focus-visible:ring-0"
+                      />
+                    </div>
+
+                    {/* Check-in */}
+                    <div className="flex items-center gap-2 p-3 border rounded-lg">
+                      <Calendar className="w-5 h-5 text-primary" />
+                      <Input
+                        type="date"
+                        placeholder="Check-in"
+                        className="border-0 p-0 focus-visible:ring-0"
+                      />
+                    </div>
+
+                    {/* Check-out */}
+                    <div className="flex items-center gap-2 p-3 border rounded-lg">
+                      <Calendar className="w-5 h-5 text-primary" />
+                      <Input
+                        type="date"
+                        placeholder="Check-out"
+                        className="border-0 p-0 focus-visible:ring-0"
+                      />
+                    </div>
+
+                    {/* Search Button */}
+                    <Button
+                      size="lg"
+                      className="w-full h-auto py-3"
+                      onClick={() => {
+                        const destination = (document.querySelector('input[placeholder="Destinație"]') as HTMLInputElement)?.value || 'Budapest';
+                        const checkIn = (document.querySelector('input[placeholder="Check-in"]') as HTMLInputElement)?.value || '2025-11-15';
+                        const checkOut = (document.querySelector('input[placeholder="Check-out"]') as HTMLInputElement)?.value || '2025-11-17';
+                        const guests = 2;
+                        window.location.href = `/hotels?destination=${destination}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
+                      }}
+                    >
+                      <Search className="w-5 h-5 mr-2" />
+                      Caută Hoteluri
+                    </Button>
+                  </div>
+                )}
 
                 {/* Flexible Search Toggle */}
                 <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
@@ -317,9 +413,9 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-16 overflow-hidden" id="pricing">
-        {/* Purple Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-booksy-dark -z-10" />
+      <section className="relative py-16 overflow-hidden bg-booksy-purple" id="pricing">
+        {/* Purple Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-booksy-purple via-booksy-purple to-booksy-dark" />
         
         {/* Decorative circles */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-booksy-gold/10 rounded-full blur-3xl" />
@@ -339,7 +435,7 @@ export default function Home() {
                 Sign Up Free
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6 text-white border-white hover:bg-white/10">
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6 text-white border-white bg-transparent hover:bg-white/20">
                 <Plane className="w-5 h-5 mr-2" />
                 View Demo
               </Button>
