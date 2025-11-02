@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -78,6 +78,7 @@ const amenityIcons: Record<string, any> = {
 
 export default function HotelsPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -87,6 +88,11 @@ export default function HotelsPage() {
   const checkIn = searchParams.get('checkIn') || '2025-11-15';
   const checkOut = searchParams.get('checkOut') || '2025-11-17';
   const guests = parseInt(searchParams.get('guests') || '2');
+
+  const handleBookHotel = (hotel: Hotel) => {
+    const hotelData = encodeURIComponent(JSON.stringify(hotel));
+    router.push(`/booking/hotel?hotel=${hotelData}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`);
+  };
 
   useEffect(() => {
     const fetchHotels = async () => {
@@ -342,7 +348,7 @@ export default function HotelsPage() {
                         Preț pentru {guests} oaspeți
                       </div>
 
-                      <Button size="lg" className="w-full">
+                      <Button size="lg" className="w-full" onClick={() => handleBookHotel(hotel)}>
                         Rezervă acum
                       </Button>
 

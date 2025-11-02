@@ -142,10 +142,6 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
-        bookings: {
-          orderBy: { createdAt: 'desc' },
-          take: 5,
-        },
         reviews: {
           orderBy: { createdAt: 'desc' },
           take: 5,

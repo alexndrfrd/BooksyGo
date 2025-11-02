@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  userId        String
+  bookingType   BookingType
+  status        BookingStatus @default(PENDING)
+  flightData    Json?
+  hotelData     Json?
+  packageData   Json?
+  passengerData Json
+  paymentStatus PaymentStatus @default(PENDING)
+  totalPrice    Float
+  currency      String        @default("EUR")
+  paymentData   Json?
+  travelDate    DateTime?
+  checkInDate   DateTime?
+  checkOutDate  DateTime?
+  bookingDate   DateTime      @default(now())
+  cancelledAt   DateTime?
+  completedAt   DateTime?
+  pointsEarned  Int           @default(0)
+  pointsUsed    Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("Booking")
+  @@index([bookingType])
+  @@index([status])
+  @@index([userId])
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  FACEBOOK
+  APPLE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  REFUNDED
+}
+
+enum BookingType {
+  FLIGHT
+  HOTEL
+  PACKAGE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}

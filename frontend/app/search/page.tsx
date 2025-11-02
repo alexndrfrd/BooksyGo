@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plane, Clock, MapPin, Star, Euro, Users, Calendar } from 'lucide-react';
@@ -52,6 +52,7 @@ interface SearchResponse {
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +60,11 @@ export default function SearchPage() {
   const origin = searchParams.get('origin') || 'OTP';
   const destination = searchParams.get('destination') || 'BUD';
   const date = searchParams.get('date') || '2025-11-15';
+
+  const handleBookFlight = (flight: Flight) => {
+    const flightData = encodeURIComponent(JSON.stringify(flight));
+    router.push(`/booking/flight?flight=${flightData}`);
+  };
 
   useEffect(() => {
     const fetchFlights = async () => {
@@ -228,7 +234,7 @@ export default function SearchPage() {
                     <p className="text-sm text-muted-foreground mb-4">
                       per persoană
                     </p>
-                    <Button size="lg" className="w-full">
+                    <Button size="lg" className="w-full" onClick={() => handleBookFlight(flight)}>
                       Rezervă acum
                     </Button>
                   </div>
