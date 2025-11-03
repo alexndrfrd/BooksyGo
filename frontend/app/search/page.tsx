@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plane, Clock, MapPin, Star, Euro, Users, Calendar } from 'lucide-react';
+import { Plane, Clock, MapPin, Star, Euro, Users, Calendar, ExternalLink } from 'lucide-react';
+import { generateSkyscannerLink, trackAffiliateClick } from '@/lib/affiliate';
 
 interface Flight {
   id: string;
@@ -64,6 +65,31 @@ export default function SearchPage() {
   const handleBookFlight = (flight: Flight) => {
     const flightData = encodeURIComponent(JSON.stringify(flight));
     router.push(`/booking/flight?flight=${flightData}`);
+  };
+
+  const handleViewOnSkyscanner = async (flight: Flight) => {
+    const affiliateLink = generateSkyscannerLink({
+      origin: flight.departure.airport,
+      destination: flight.arrival.airport,
+      departureDate: flight.departure.date,
+      adults: 1,
+      cabinClass: flight.cabinClass.toLowerCase() as 'economy' | 'premiumeconomy' | 'business' | 'first',
+    });
+
+    // Track affiliate click
+    await trackAffiliateClick({
+      provider: 'skyscanner',
+      userId: localStorage.getItem('userId') || undefined,
+      searchParams: {
+        origin: flight.departure.airport,
+        destination: flight.arrival.airport,
+        date: flight.departure.date,
+      },
+      destinationUrl: affiliateLink,
+    });
+
+    // Open in new tab
+    window.open(affiliateLink, '_blank');
   };
 
   useEffect(() => {
@@ -234,9 +260,20 @@ export default function SearchPage() {
                     <p className="text-sm text-muted-foreground mb-4">
                       per persoană
                     </p>
-                    <Button size="lg" className="w-full" onClick={() => handleBookFlight(flight)}>
-                      Rezervă acum
-                    </Button>
+                    <div className="space-y-2">
+                      <Button size="lg" className="w-full" onClick={() => handleBookFlight(flight)}>
+                        Rezervă acum
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="w-full gap-2" 
+                        onClick={() => handleViewOnSkyscanner(flight)}
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        Vezi pe Skyscanner
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardContent>

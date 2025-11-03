@@ -20,8 +20,10 @@ import {
   Calendar,
   Euro,
   CheckCircle,
-  X
+  X,
+  ExternalLink
 } from 'lucide-react';
+import { generateBookingComLink, trackAffiliateClick } from '@/lib/affiliate';
 
 interface Hotel {
   id: string;
@@ -92,6 +94,32 @@ export default function HotelsPage() {
   const handleBookHotel = (hotel: Hotel) => {
     const hotelData = encodeURIComponent(JSON.stringify(hotel));
     router.push(`/booking/hotel?hotel=${hotelData}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`);
+  };
+
+  const handleViewOnBookingCom = async (hotel: Hotel) => {
+    const affiliateLink = generateBookingComLink({
+      destination: destination,
+      checkIn: checkIn,
+      checkOut: checkOut,
+      adults: guests,
+      rooms: 1,
+    });
+
+    // Track affiliate click
+    await trackAffiliateClick({
+      provider: 'booking.com',
+      userId: localStorage.getItem('userId') || undefined,
+      searchParams: {
+        destination,
+        checkIn,
+        checkOut,
+        guests,
+      },
+      destinationUrl: affiliateLink,
+    });
+
+    // Open in new tab
+    window.open(affiliateLink, '_blank');
   };
 
   useEffect(() => {
@@ -348,9 +376,20 @@ export default function HotelsPage() {
                         Preț pentru {guests} oaspeți
                       </div>
 
-                      <Button size="lg" className="w-full" onClick={() => handleBookHotel(hotel)}>
-                        Rezervă acum
-                      </Button>
+                      <div className="space-y-2">
+                        <Button size="lg" className="w-full" onClick={() => handleBookHotel(hotel)}>
+                          Rezervă acum
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="w-full gap-2" 
+                          onClick={() => handleViewOnBookingCom(hotel)}
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                          Vezi pe Booking.com
+                        </Button>
+                      </div>
 
                       <div className="text-xs text-muted-foreground mt-2">
                         Anulare gratuită până la 24h

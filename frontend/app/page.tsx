@@ -4,11 +4,13 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, Plane, Hotel, Users, Calendar, ArrowRight, Sparkles, Trophy, Target } from "lucide-react";
+import { Search, Plane, Hotel, Users, Calendar, ArrowRight, Sparkles, Trophy, Target, Package } from "lucide-react";
 import { useState } from "react";
+import { AIChat, ChatButton } from "@/components/ai-chat";
 
 export default function Home() {
-  const [searchType, setSearchType] = useState<'flights' | 'hotels'>('flights');
+  const [searchType, setSearchType] = useState<'flights' | 'hotels' | 'packages'>('flights');
+  const [isChatOpen, setIsChatOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
@@ -30,7 +32,10 @@ export default function Home() {
             <div className="hidden md:flex items-center gap-6 text-white/90">
               <a href="#features" className="hover:text-booksy-gold transition-colors">Features</a>
               <a href="#how-it-works" className="hover:text-booksy-gold transition-colors">How It Works</a>
-              <a href="#pricing" className="hover:text-booksy-gold transition-colors">Pricing</a>
+              <a href="/premium" className="hover:text-booksy-gold transition-colors flex items-center gap-1">
+                <span className="text-yellow-400">👑</span>
+                Premium
+              </a>
             </div>
 
             {/* Auth Buttons */}
@@ -88,13 +93,13 @@ export default function Home() {
               <CardContent className="p-6">
                 {/* Search Type Toggle */}
                 <div className="flex justify-center mb-6">
-                  <div className="bg-white/10 rounded-lg p-1">
+                  <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-1.5 border border-white/20">
                     <button
                       onClick={() => setSearchType('flights')}
-                      className={`px-6 py-2 rounded-md font-medium transition-all ${
+                      className={`px-6 py-3 rounded-md font-medium transition-all ${
                         searchType === 'flights'
-                          ? 'bg-white text-primary shadow-sm'
-                          : 'text-white/80 hover:text-white'
+                          ? 'bg-white text-primary shadow-lg scale-105'
+                          : 'bg-white/10 text-white hover:bg-white/20 hover:scale-102'
                       }`}
                     >
                       <Plane className="w-4 h-4 inline mr-2" />
@@ -102,118 +107,227 @@ export default function Home() {
                     </button>
                     <button
                       onClick={() => setSearchType('hotels')}
-                      className={`px-6 py-2 rounded-md font-medium transition-all ${
+                      className={`px-6 py-3 rounded-md font-medium transition-all ${
                         searchType === 'hotels'
-                          ? 'bg-white text-primary shadow-sm'
-                          : 'text-white/80 hover:text-white'
+                          ? 'bg-white text-primary shadow-lg scale-105'
+                          : 'bg-white/10 text-white hover:bg-white/20 hover:scale-102'
                       }`}
                     >
                       <Hotel className="w-4 h-4 inline mr-2" />
                       Hoteluri
                     </button>
+                    <button
+                      onClick={() => setSearchType('packages')}
+                      className={`px-6 py-3 rounded-md font-medium transition-all ${
+                        searchType === 'packages'
+                          ? 'bg-white text-primary shadow-lg scale-105'
+                          : 'bg-white/10 text-white hover:bg-white/20 hover:scale-102'
+                      }`}
+                    >
+                      <Package className="w-4 h-4 inline mr-2" />
+                      Pachete
+                    </button>
                   </div>
                 </div>
 
-                {searchType === 'flights' ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                    {/* Origin */}
-                    <div className="flex items-center gap-2 p-3 border rounded-lg">
-                      <Plane className="w-5 h-5 text-primary" />
-                      <Input
-                        placeholder="De unde?"
-                        className="border-0 p-0 focus-visible:ring-0"
-                      />
-                    </div>
+                {searchType === 'flights' && (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                      {/* Origin */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Plane className="w-5 h-5 text-primary" />
+                        <Input
+                          placeholder="De unde?"
+                          className="border-0 p-0 focus-visible:ring-0"
+                        />
+                      </div>
 
-                    {/* Destination */}
-                    <div className="flex items-center gap-2 p-3 border rounded-lg">
-                      <Target className="w-5 h-5 text-primary" />
-                      <Input
-                        placeholder="Încotro?"
-                        className="border-0 p-0 focus-visible:ring-0"
-                      />
-                    </div>
+                      {/* Destination */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Target className="w-5 h-5 text-primary" />
+                        <Input
+                          placeholder="Încotro?"
+                          className="border-0 p-0 focus-visible:ring-0"
+                        />
+                      </div>
 
-                    {/* Date */}
-                    <div className="flex items-center gap-2 p-3 border rounded-lg">
-                      <Calendar className="w-5 h-5 text-primary" />
-                      <Input
-                        type="date"
-                        className="border-0 p-0 focus-visible:ring-0"
-                      />
-                    </div>
+                      {/* Date */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Calendar className="w-5 h-5 text-primary" />
+                        <Input
+                          type="date"
+                          className="border-0 p-0 focus-visible:ring-0"
+                        />
+                      </div>
 
-                    {/* Passengers */}
-                    <div className="flex items-center gap-2 p-3 border rounded-lg">
-                      <Users className="w-5 h-5 text-primary" />
-                      <Input
-                        type="number"
-                        placeholder="2 adulți"
-                        className="border-0 p-0 focus-visible:ring-0"
-                      />
-                    </div>
+                      {/* Passengers */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Users className="w-5 h-5 text-primary" />
+                        <Input
+                          type="number"
+                          placeholder="2 adulți"
+                          className="border-0 p-0 focus-visible:ring-0"
+                        />
+                      </div>
 
-                    {/* Search Button */}
-                    <Button
-                      size="lg"
-                      className="w-full h-auto py-3"
-                      onClick={() => {
-                        const origin = (document.querySelector('input[placeholder="De unde?"]') as HTMLInputElement)?.value || 'OTP';
-                        const destination = (document.querySelector('input[placeholder="Încotro?"]') as HTMLInputElement)?.value || 'BUD';
-                        const date = (document.querySelector('input[type="date"]') as HTMLInputElement)?.value || '2025-11-15';
-                        window.location.href = `/search?origin=${origin}&destination=${destination}&date=${date}`;
-                      }}
-                    >
-                      <Search className="w-5 h-5 mr-2" />
-                      Caută Zboruri
-                    </Button>
+                      {/* Search Button */}
+                      <Button
+                        size="lg"
+                        className="w-full h-auto py-3"
+                        onClick={() => {
+                          const origin = (document.querySelector('input[placeholder="De unde?"]') as HTMLInputElement)?.value || 'OTP';
+                          const destination = (document.querySelector('input[placeholder="Încotro?"]') as HTMLInputElement)?.value || 'BUD';
+                          const date = (document.querySelector('input[type="date"]') as HTMLInputElement)?.value || '2025-11-15';
+                          window.location.href = `/search?origin=${origin}&destination=${destination}&date=${date}`;
+                        }}
+                      >
+                        <Search className="w-5 h-5 mr-2" />
+                        Caută Zboruri
+                      </Button>
+                    </div>
+                    {/* AI Helper Button */}
+                    <div className="flex justify-center">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 hover:scale-105 transition-all shadow-lg"
+                        onClick={() => setIsChatOpen(true)}
+                      >
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        💬 Sau întreabă AI-ul despre călătoria ta
+                      </Button>
+                    </div>
                   </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* Destination */}
-                    <div className="flex items-center gap-2 p-3 border rounded-lg">
-                      <Hotel className="w-5 h-5 text-primary" />
-                      <Input
-                        placeholder="Destinație"
-                        className="border-0 p-0 focus-visible:ring-0"
-                      />
-                    </div>
+                )}
 
-                    {/* Check-in */}
-                    <div className="flex items-center gap-2 p-3 border rounded-lg">
-                      <Calendar className="w-5 h-5 text-primary" />
-                      <Input
-                        type="date"
-                        placeholder="Check-in"
-                        className="border-0 p-0 focus-visible:ring-0"
-                      />
-                    </div>
+                {searchType === 'hotels' && (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {/* Destination */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Hotel className="w-5 h-5 text-primary" />
+                        <Input
+                          placeholder="Destinație"
+                          className="border-0 p-0 focus-visible:ring-0"
+                        />
+                      </div>
 
-                    {/* Check-out */}
-                    <div className="flex items-center gap-2 p-3 border rounded-lg">
-                      <Calendar className="w-5 h-5 text-primary" />
-                      <Input
-                        type="date"
-                        placeholder="Check-out"
-                        className="border-0 p-0 focus-visible:ring-0"
-                      />
-                    </div>
+                      {/* Check-in */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Calendar className="w-5 h-5 text-primary" />
+                        <Input
+                          type="date"
+                          placeholder="Check-in"
+                          className="border-0 p-0 focus-visible:ring-0"
+                        />
+                      </div>
 
-                    {/* Search Button */}
-                    <Button
-                      size="lg"
-                      className="w-full h-auto py-3"
-                      onClick={() => {
-                        const destination = (document.querySelector('input[placeholder="Destinație"]') as HTMLInputElement)?.value || 'Budapest';
-                        const checkIn = (document.querySelector('input[placeholder="Check-in"]') as HTMLInputElement)?.value || '2025-11-15';
-                        const checkOut = (document.querySelector('input[placeholder="Check-out"]') as HTMLInputElement)?.value || '2025-11-17';
-                        const guests = 2;
-                        window.location.href = `/hotels?destination=${destination}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
-                      }}
-                    >
-                      <Search className="w-5 h-5 mr-2" />
-                      Caută Hoteluri
-                    </Button>
+                      {/* Check-out */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Calendar className="w-5 h-5 text-primary" />
+                        <Input
+                          type="date"
+                          placeholder="Check-out"
+                          className="border-0 p-0 focus-visible:ring-0"
+                        />
+                      </div>
+
+                      {/* Search Button */}
+                      <Button
+                        size="lg"
+                        className="w-full h-auto py-3"
+                        onClick={() => {
+                          const destination = (document.querySelector('input[placeholder="Destinație"]') as HTMLInputElement)?.value || 'Budapest';
+                          const checkIn = (document.querySelector('input[placeholder="Check-in"]') as HTMLInputElement)?.value || '2025-11-15';
+                          const checkOut = (document.querySelector('input[placeholder="Check-out"]') as HTMLInputElement)?.value || '2025-11-17';
+                          const guests = 2;
+                          window.location.href = `/hotels?destination=${destination}&checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`;
+                        }}
+                      >
+                        <Search className="w-5 h-5 mr-2" />
+                        Caută Hoteluri
+                      </Button>
+                    </div>
+                    {/* AI Helper Button */}
+                    <div className="flex justify-center">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 hover:scale-105 transition-all shadow-lg"
+                        onClick={() => setIsChatOpen(true)}
+                      >
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        💬 Sau întreabă AI-ul despre cazarea ideală
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {searchType === 'packages' && (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {/* Destination */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Target className="w-5 h-5 text-primary" />
+                        <Input
+                          placeholder="Unde vrei să mergi?"
+                          className="border-0 p-0 focus-visible:ring-0"
+                          id="package-destination"
+                        />
+                      </div>
+
+                      {/* Duration */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Calendar className="w-5 h-5 text-primary" />
+                        <Input
+                          type="number"
+                          placeholder="Câte zile?"
+                          className="border-0 p-0 focus-visible:ring-0"
+                          id="package-duration"
+                          min="1"
+                          defaultValue="5"
+                        />
+                      </div>
+
+                      {/* Budget */}
+                      <div className="flex items-center gap-2 p-3 border rounded-lg">
+                        <Sparkles className="w-5 h-5 text-primary" />
+                        <Input
+                          type="number"
+                          placeholder="Buget (EUR)"
+                          className="border-0 p-0 focus-visible:ring-0"
+                          id="package-budget"
+                          defaultValue="1000"
+                        />
+                      </div>
+
+                      {/* Search Button */}
+                      <Button
+                        size="lg"
+                        className="w-full h-auto py-3"
+                        onClick={() => {
+                          const destination = (document.getElementById('package-destination') as HTMLInputElement)?.value || 'Paris';
+                          const duration = (document.getElementById('package-duration') as HTMLInputElement)?.value || '5';
+                          const budget = (document.getElementById('package-budget') as HTMLInputElement)?.value || '1000';
+                          window.location.href = `/packages?destination=${destination}&duration=${duration}&budget=${budget}`;
+                        }}
+                      >
+                        <Search className="w-5 h-5 mr-2" />
+                        Caută Pachete
+                      </Button>
+                    </div>
+                    {/* AI Helper Button */}
+                    <div className="flex justify-center">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="bg-gradient-to-r from-purple-500 to-blue-500 text-white border-0 hover:scale-105 transition-all shadow-lg"
+                        onClick={() => setIsChatOpen(true)}
+                      >
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        💬 Sau cere AI-ului să creeze pachetul perfect
+                      </Button>
+                    </div>
                   </div>
                 )}
 
@@ -476,6 +590,10 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* AI Chat */}
+      <ChatButton onClick={() => setIsChatOpen(true)} />
+      <AIChat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 }
