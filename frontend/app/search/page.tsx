@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plane, Clock, MapPin, Star, Euro, Users, Calendar, ExternalLink } from 'lucide-react';
-import { generateSkyscannerLink, trackAffiliateClick } from '@/lib/affiliate';
+// Removed Skyscanner affiliate - using direct booking now
 
 interface Flight {
   id: string;
@@ -67,37 +67,13 @@ export default function SearchPage() {
     router.push(`/booking/flight?flight=${flightData}`);
   };
 
-  const handleViewOnSkyscanner = async (flight: Flight) => {
-    const affiliateLink = generateSkyscannerLink({
-      origin: flight.departure.airport,
-      destination: flight.arrival.airport,
-      departureDate: flight.departure.date,
-      adults: 1,
-      cabinClass: flight.cabinClass.toLowerCase() as 'economy' | 'premiumeconomy' | 'business' | 'first',
-    });
-
-    // Track affiliate click
-    await trackAffiliateClick({
-      provider: 'skyscanner',
-      userId: localStorage.getItem('userId') || undefined,
-      searchParams: {
-        origin: flight.departure.airport,
-        destination: flight.arrival.airport,
-        date: flight.departure.date,
-      },
-      destinationUrl: affiliateLink,
-    });
-
-    // Open in new tab
-    window.open(affiliateLink, '_blank');
-  };
-
   useEffect(() => {
     const fetchFlights = async () => {
       try {
         setLoading(true);
+        const adults = searchParams.get('adults') || '1';
         const response = await fetch(
-          `/api/search?type=flights&origin=${origin}&destination=${destination}&date=${date}`
+          `/api/flights/search?origin=${origin}&destination=${destination}&date=${date}&adults=${adults}`
         );
         const data: SearchResponse = await response.json();
 
@@ -262,17 +238,11 @@ export default function SearchPage() {
                     </p>
                     <div className="space-y-2">
                       <Button size="lg" className="w-full" onClick={() => handleBookFlight(flight)}>
-                        Rezervă acum
+                        🎫 Rezervă direct acum
                       </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="w-full gap-2" 
-                        onClick={() => handleViewOnSkyscanner(flight)}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        Vezi pe Skyscanner
-                      </Button>
+                      <p className="text-xs text-center text-green-600 font-semibold">
+                        ✅ Prețuri reale de la Amadeus
+                      </p>
                     </div>
                   </div>
                 </div>

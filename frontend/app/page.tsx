@@ -7,10 +7,26 @@ import { Input } from "@/components/ui/input";
 import { Search, Plane, Hotel, Users, Calendar, ArrowRight, Sparkles, Trophy, Target, Package } from "lucide-react";
 import { useState } from "react";
 import { AIChat, ChatButton } from "@/components/ai-chat";
+import { LocationAutocomplete } from "@/components/location-autocomplete";
 
 export default function Home() {
   const [searchType, setSearchType] = useState<'flights' | 'hotels' | 'packages'>('flights');
   const [isChatOpen, setIsChatOpen] = useState(false);
+  
+  // Flight search state
+  const [flightOrigin, setFlightOrigin] = useState<any>(null);
+  const [flightDestination, setFlightDestination] = useState<any>(null);
+  const [flightDate, setFlightDate] = useState('');
+  const [flightPassengers, setFlightPassengers] = useState(1);
+  
+  const handleFlightSearch = () => {
+    const origin = flightOrigin?.iataCode || 'OTP';
+    const destination = flightDestination?.iataCode || 'LON';
+    const date = flightDate || '2025-12-15';
+    const adults = flightPassengers || 1;
+    window.location.href = `/search?origin=${origin}&destination=${destination}&date=${date}&adults=${adults}`;
+  };
+  
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
@@ -133,30 +149,31 @@ export default function Home() {
                 {searchType === 'flights' && (
                   <div className="space-y-3">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                      {/* Origin */}
-                      <div className="flex items-center gap-2 p-3 border rounded-lg">
-                        <Plane className="w-5 h-5 text-primary" />
-                        <Input
-                          placeholder="De unde?"
-                          className="border-0 p-0 focus-visible:ring-0"
-                        />
-                      </div>
+                      {/* Origin - with Autocomplete */}
+                      <LocationAutocomplete
+                        placeholder="De unde? (ex: Bucharest)"
+                        value=""
+                        onChange={setFlightOrigin}
+                        icon={<Plane className="w-5 h-5 text-primary" />}
+                      />
 
-                      {/* Destination */}
-                      <div className="flex items-center gap-2 p-3 border rounded-lg">
-                        <Target className="w-5 h-5 text-primary" />
-                        <Input
-                          placeholder="Încotro?"
-                          className="border-0 p-0 focus-visible:ring-0"
-                        />
-                      </div>
+                      {/* Destination - with Autocomplete */}
+                      <LocationAutocomplete
+                        placeholder="Încotro? (ex: London)"
+                        value=""
+                        onChange={setFlightDestination}
+                        icon={<Target className="w-5 h-5 text-primary" />}
+                      />
 
                       {/* Date */}
                       <div className="flex items-center gap-2 p-3 border rounded-lg">
                         <Calendar className="w-5 h-5 text-primary" />
                         <Input
                           type="date"
+                          value={flightDate}
+                          onChange={(e) => setFlightDate(e.target.value)}
                           className="border-0 p-0 focus-visible:ring-0"
+                          min={new Date().toISOString().split('T')[0]}
                         />
                       </div>
 
@@ -165,7 +182,11 @@ export default function Home() {
                         <Users className="w-5 h-5 text-primary" />
                         <Input
                           type="number"
-                          placeholder="2 adulți"
+                          value={flightPassengers}
+                          onChange={(e) => setFlightPassengers(parseInt(e.target.value) || 1)}
+                          min="1"
+                          max="9"
+                          placeholder="Adulți"
                           className="border-0 p-0 focus-visible:ring-0"
                         />
                       </div>
@@ -174,12 +195,7 @@ export default function Home() {
                       <Button
                         size="lg"
                         className="w-full h-auto py-3"
-                        onClick={() => {
-                          const origin = (document.querySelector('input[placeholder="De unde?"]') as HTMLInputElement)?.value || 'OTP';
-                          const destination = (document.querySelector('input[placeholder="Încotro?"]') as HTMLInputElement)?.value || 'BUD';
-                          const date = (document.querySelector('input[type="date"]') as HTMLInputElement)?.value || '2025-11-15';
-                          window.location.href = `/search?origin=${origin}&destination=${destination}&date=${date}`;
-                        }}
+                        onClick={handleFlightSearch}
                       >
                         <Search className="w-5 h-5 mr-2" />
                         Caută Zboruri
